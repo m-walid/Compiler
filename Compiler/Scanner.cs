@@ -23,7 +23,7 @@ namespace Compiler
         const string DIGIT = @"\d";
 
 
-        public Queue<Token> tokens = new Queue<Token>();
+        public List<Token> tokens = new List<Token>();
         private string input;
         public int index = -1;
         private char? currentChar = null;
@@ -309,7 +309,7 @@ namespace Compiler
                     }
                     if (currentState != state.DONE && currentState != state.ERROR) getNext(); //because if done we need to check the last char before we advance
                 }
-                tokens.Enqueue(currentToken); 
+                tokens.Add(currentToken); 
             }
         }
 

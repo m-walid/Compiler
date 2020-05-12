@@ -34,7 +34,7 @@ namespace Compiler
             {"elseif", type.ELSEIF},
             {"then", type.THEN},
             {"return", type.RETURN},
-            {"endl", type.ENDL},
+            {"end", type.ENDL},
             {":=", type.ASSIGNMENT},
             {"+", type.PLUS},
             {"-", type.MINUS},
