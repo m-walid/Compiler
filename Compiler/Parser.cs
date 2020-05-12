@@ -77,15 +77,16 @@ namespace Compiler
                 case type.WRITE:
                     write_stmt();
                     break;
+                default:
+                    Console.WriteLine("zoz");
+                    break;
             }
         }
 
         private void if_stmt()
         {
             match(type.IF);
-            match(type.LEFT_BRACE);
             exp();
-            match(type.RIGHT_BRACE);
             match(type.THEN);
             stmt_seq();
             if(currToken.tokenType == type.ELSE)
@@ -128,7 +129,7 @@ namespace Compiler
         private void exp()
         {
             simple_exp();
-            if(currToken.tokenType == ((currToken.tokenType == type.LESS_THAN) || (currToken.tokenType == type.GREATER_THAN) || (currToken.tokenType == type.EQUAL) ))
+            if(currToken.tokenType == type.LESS_THAN || currToken.tokenType == type.GREATER_THAN || currToken.tokenType == type.EQUAL)
             {
                comp_op();
                simple_exp();
@@ -148,7 +149,7 @@ namespace Compiler
         private void simple_exp()
         {
             term();
-            while ( currToken.tokenType == ((currToken.tokenType == type.PLUS) ||(currToken.tokenType == type.MINUS) )  )
+            while (currToken.tokenType == type.PLUS || currToken.tokenType == type.MINUS )
             {
                 add_op();
                 term();
@@ -166,7 +167,7 @@ namespace Compiler
         private void term()
         {
             factor();
-            while (currToken.tokenType == (currToken.tokenType == type.MULTIPLY) ||(currToken.tokenType == type.DIVIDE) ) 
+            while (currToken.tokenType == type.MULTIPLY ||currToken.tokenType == type.DIVIDE ) 
             {
                 mul_op();
                 factor();
@@ -175,7 +176,7 @@ namespace Compiler
 
         private void mul_op()
         {
-            if (currToken.tokenType == type.MULYIPLY)  match(type.MULYIPLY);
+            if (currToken.tokenType == type.MULTIPLY)  match(type.MULTIPLY);
             else if (currToken.tokenType == type.DIVIDE) match(type.DIVIDE);
             else Console.WriteLine("error");
             
