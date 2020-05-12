@@ -191,6 +191,8 @@ namespace Compiler
             }
             else if(currToken.tokenType == type.FLOAT) match(type.FLOAT);
             else if(currToken.tokenType == type.INT) match(type.INT);
+            else Console.WriteLine("error");
+
         }
 
         
