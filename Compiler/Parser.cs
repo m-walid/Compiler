@@ -140,15 +140,15 @@ namespace Compiler
         {
             if (currToken.tokenType == type.LESS_THAN)   match(type.LESS_THAN); 
 
-            else if (currToken.tokenType == GREATER_THAN) match(type.GREATER_THAN);
+            else if (currToken.tokenType == type.GREATER_THAN) match(type.GREATER_THAN);
 
-            else if (currToken.tokenType == EQUAL) match(type.EQUAL);
+            else if (currToken.tokenType == type.EQUAL) match(type.EQUAL);
         }
 
         private void simple_exp()
         {
             term();
-            while ( currToken.tokenType == add_op() )
+            while ( currToken.tokenType == type.PLUS || currToken.tokenType == type.MINUS)
             {
                 add_op();
                 term();
@@ -166,7 +166,7 @@ namespace Compiler
         private void term()
         {
             factor();
-            while (currToken.tokenType == mul_op())
+            while (currToken.tokenType == type.MULTIPLY || currToken.tokenType == type.MULTIPLY)
             {
                 mul_op();
                 factor();
@@ -175,7 +175,7 @@ namespace Compiler
 
         private void mul_op()
         {
-            if (currToken.tokenType == type.MULYIPLY)  match(type.MULYIPLY);
+            if (currToken.tokenType == type.MULTIPLY)  match(type.MULTIPLY);
             else if (currToken.tokenType == type.DIVIDE) match(type.DIVIDE);
         }
 
