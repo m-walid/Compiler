@@ -127,32 +127,55 @@ namespace Compiler
 
         private void exp()
         {
-
+            simple_exp();
+            if(currToken.tokenType == comp_op())
+            {
+               comp_op();
+               simple_exp();
+            }
         }
 
         private void comp_op()
         {
+            if (currToken.tokenType == type.LESS_THAN)   match(type.LESS_THAN); 
 
+            else if (currToken.tokenType == GREATER_THAN) match(type.GREATER_THAN);
+
+            else if (currToken.tokenType == EQUAL) match(type.EQUAL);
         }
 
         private void simple_exp()
         {
-
+            term();
+            while ( currToken.tokenType == add_op() )
+            {
+                add_op();
+                term();
+            }
         }
 
         private void add_op()
         {
+            if (currToken.tokenType == type.PLUS)   match(type.PLUS); 
+
+            else if (currToken.tokenType == type.MINUS) match(type.MINUS);
 
         }
 
         private void term()
         {
-
+            factor();
+            while (currToken.tokenType == mul_op())
+            {
+                mul_op();
+                factor();
+            }
         }
 
         private void mul_op()
         {
-
+            if (currToken.tokenType == type.MULYIPLY)  match(type.MULYIPLY);
+            else if (currToken.tokenType == type.DIVIDE) match(type.DIVIDE);
         }
 
         private void factor()
