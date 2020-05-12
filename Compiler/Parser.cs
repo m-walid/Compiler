@@ -77,16 +77,15 @@ namespace Compiler
                 case type.WRITE:
                     write_stmt();
                     break;
-                default:
-                    Console.WriteLine("zoz? error?");
-                    break;
             }
         }
 
         private void if_stmt()
         {
             match(type.IF);
+            match(type.LEFT_BRACE);
             exp();
+            match(type.RIGHT_BRACE);
             match(type.THEN);
             stmt_seq();
             if(currToken.tokenType == type.ELSE)
@@ -129,7 +128,7 @@ namespace Compiler
         private void exp()
         {
             simple_exp();
-            if(currToken.tokenType == comp_op())
+            if(currToken.tokenType == ((currToken.tokenType == type.LESS_THAN) || (currToken.tokenType == type.GREATER_THAN) || (currToken.tokenType == type.EQUAL) ))
             {
                comp_op();
                simple_exp();
@@ -143,12 +142,13 @@ namespace Compiler
             else if (currToken.tokenType == type.GREATER_THAN) match(type.GREATER_THAN);
 
             else if (currToken.tokenType == type.EQUAL) match(type.EQUAL);
+            else Console.WriteLine("error");
         }
 
         private void simple_exp()
         {
             term();
-            while ( currToken.tokenType == type.PLUS || currToken.tokenType == type.MINUS)
+            while ( currToken.tokenType == ((currToken.tokenType == type.PLUS) ||(currToken.tokenType == type.MINUS) )  )
             {
                 add_op();
                 term();
@@ -160,13 +160,13 @@ namespace Compiler
             if (currToken.tokenType == type.PLUS)   match(type.PLUS); 
 
             else if (currToken.tokenType == type.MINUS) match(type.MINUS);
-
+            else Console.WriteLine("error");
         }
 
         private void term()
         {
             factor();
-            while (currToken.tokenType == type.MULTIPLY || currToken.tokenType == type.MULTIPLY)
+            while (currToken.tokenType == (currToken.tokenType == type.MULTIPLY) ||(currToken.tokenType == type.DIVIDE) ) 
             {
                 mul_op();
                 factor();
@@ -175,13 +175,22 @@ namespace Compiler
 
         private void mul_op()
         {
-            if (currToken.tokenType == type.MULTIPLY)  match(type.MULTIPLY);
+            if (currToken.tokenType == type.MULYIPLY)  match(type.MULYIPLY);
             else if (currToken.tokenType == type.DIVIDE) match(type.DIVIDE);
+            else Console.WriteLine("error");
+            
         }
 
         private void factor()
         {
-
+            if (currToken.tokenType == type.ID) match(type.ID);
+            else if(currToken.tokenType == type.LEFT_PARENTH)
+            {
+                exp();
+                match(type.RIGHT_PARENTH);
+            }
+            else if(currToken.tokenType == type.FLOAT) match(type.FLOAT);
+            else if(currToken.tokenType == type.INT) match(type.INT);
         }
 
         
