@@ -77,15 +77,16 @@ namespace Compiler
                 case type.WRITE:
                     write_stmt();
                     break;
+                default:
+                    Console.WriteLine("zoz? error?");
+                    break;
             }
         }
 
         private void if_stmt()
         {
             match(type.IF);
-            match(type.LEFT_BRACE);
             exp();
-            match(type.RIGHT_BRACE);
             match(type.THEN);
             stmt_seq();
             if(currToken.tokenType == type.ELSE)
