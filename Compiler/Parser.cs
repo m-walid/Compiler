@@ -3,18 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Compiler
 {
     class Parser
     {
         private List<Token> tokens = new List<Token>();
-        //private Node root = new Node();
+        public List<TreeNode> root_nodes { get; set; }
         private Token currToken;
         private int index=1;
         public Parser(List<Token> tokens)
         {
                 this.tokens = tokens;
+                root_nodes=program();
                 
         }
 
@@ -43,157 +45,230 @@ namespace Compiler
             }
         }
 
-        private void program()
+        private List<TreeNode> program()
         {
-            stmt_seq();
+            return stmt_seq();
         }
 
-        private void stmt_seq()
+        private List<TreeNode> stmt_seq()
         {
-            stmt();
+            List<TreeNode> node_list = new List<TreeNode>();
+
+            node_list.Add(stmt());
             while(currToken.tokenType == type.SEMI_COLON)
             {
                 match(type.SEMI_COLON);
-                stmt();
+                node_list.Add(stmt());
             }
+            return node_list;
         }
 
-        private void stmt()
+        private TreeNode stmt()
         {
             switch (currToken.tokenType)
             {
                 case type.IF:
-                    if_stmt();
-                    break;
+                    return if_stmt();
                 case type.REPEAT:
-                    repeat_stmt();
-                    break;
+                    return repeat_stmt();
                 case type.ASSIGNMENT:
-                    assign_stmt();
-                    break;
+                    return assign_stmt();
                 case type.READ:
-                    read_stmt();
-                    break;
+                    return read_stmt();
                 case type.WRITE:
-                    write_stmt();
-                    break;
+                    return write_stmt();
                 default:
-                    Console.WriteLine("zoz");
-                    break;
+                    return null;
             }
         }
 
-        private void if_stmt()
+        private TreeNode if_stmt()
         {
             match(type.IF);
-            exp();
+            TreeNode if_node = new TreeNode("if");
+            if_node.Nodes.Add(exp());
             match(type.THEN);
-            stmt_seq();
+            if_node.Nodes.AddRange(stmt_seq().ToArray());
             if(currToken.tokenType == type.ELSE)
             {
                 match(type.ELSE);
-                stmt_seq();
-               
+                if_node.Nodes.AddRange(stmt_seq().ToArray());
+
 
             }
             match(type.ENDL);
+            return if_node;
         }
 
-        private void repeat_stmt()
+        private TreeNode repeat_stmt()
         {
             match(type.REPEAT);
-            stmt_seq();
+            TreeNode repeat_node =new TreeNode("repeat");
+            repeat_node.Nodes.AddRange( stmt_seq().ToArray());
             match(type.UNTIL);
-            exp();
+            repeat_node.Nodes.Add(exp());
+            return repeat_node;
         }
 
-        private void assign_stmt()
+        private TreeNode assign_stmt()
         {
+            TreeNode assign_node = new TreeNode("Assign (" + currToken.lexeme + ")");
             match(type.ID);
             match(type.ASSIGNMENT);
-            exp();
+            
+            assign_node.Nodes.Add(exp());
+            return assign_node;
         }
 
-        private void read_stmt()
-        {
+        private TreeNode read_stmt()
+        {   
             match(type.READ);
+            TreeNode read_node = new TreeNode("read (" + currToken.lexeme + ")"); //currToken.lexeme is the name of the ID
             match(type.ID);
+            return read_node;
         }
 
-        private void write_stmt()
+        private TreeNode write_stmt()
         {
             match(type.WRITE);
-            exp();
+            TreeNode write_node = new TreeNode("write");
+            write_node.Nodes.Add(exp());
+            return write_node;
         }
 
-        private void exp()
+        private TreeNode exp()
         {
-            simple_exp();
+           TreeNode simple_exp_node1= simple_exp();
             if(currToken.tokenType == type.LESS_THAN || currToken.tokenType == type.GREATER_THAN || currToken.tokenType == type.EQUAL)
             {
-               comp_op();
-               simple_exp();
+                TreeNode op_node=comp_op();
+                TreeNode simple_exp_node2= simple_exp();
+                op_node.Nodes.Add(simple_exp_node1);
+                op_node.Nodes.Add(simple_exp_node2);
+                return op_node;
             }
+            return simple_exp_node1;
         }
 
-        private void comp_op()
+        private TreeNode comp_op()
         {
-            if (currToken.tokenType == type.LESS_THAN)   match(type.LESS_THAN); 
-
-            else if (currToken.tokenType == type.GREATER_THAN) match(type.GREATER_THAN);
-
-            else if (currToken.tokenType == type.EQUAL) match(type.EQUAL);
-            else Console.WriteLine("error");
+            TreeNode comp_node = new TreeNode("op (" + currToken.lexeme + ")");
+            if (currToken.tokenType == type.LESS_THAN)
+            {
+                match(type.LESS_THAN);
+            }
+            else if (currToken.tokenType == type.GREATER_THAN)
+            {
+                match(type.GREATER_THAN);
+            }
+            else if (currToken.tokenType == type.EQUAL)
+            {
+                match(type.EQUAL);
+            }
+            else
+            {
+                Console.WriteLine("error");
+                return null;
+            }
+            return comp_node;
         }
 
-        private void simple_exp()
+        private TreeNode simple_exp()
         {
-            term();
+            TreeNode term_node1=term();
+            TreeNode add_op_node = null;
+            TreeNode temp = null;
             while (currToken.tokenType == type.PLUS || currToken.tokenType == type.MINUS )
             {
-                add_op();
-                term();
+                temp = add_op_node;
+                add_op_node = add_op();
+                if (temp != null) term_node1 = temp;
+                TreeNode term_node2 = term();
+                add_op_node.Nodes.Add(term_node1);
+                add_op_node.Nodes.Add(term_node2);
+               
             }
+            if(add_op_node != null) return add_op_node;
+            return term_node1;
         }
 
-        private void add_op()
+        private TreeNode add_op()
         {
-            if (currToken.tokenType == type.PLUS)   match(type.PLUS); 
-
+            TreeNode add_node = new TreeNode("op (" + currToken.lexeme + ")");
+            if (currToken.tokenType == type.PLUS) match(type.PLUS);
             else if (currToken.tokenType == type.MINUS) match(type.MINUS);
-            else Console.WriteLine("error");
+            else
+            {
+                Console.WriteLine("error");
+                return null;
+            }
+            return add_node;
         }
 
-        private void term()
+        private TreeNode term()
         {
-            factor();
+            TreeNode f_node1=factor();
+            TreeNode mul_op_node = null;
+            TreeNode temp = null;
             while (currToken.tokenType == type.MULTIPLY ||currToken.tokenType == type.DIVIDE ) 
             {
-                mul_op();
-                factor();
+                temp = mul_op_node;
+                mul_op_node=mul_op();
+                if (temp != null) f_node1 = temp;
+                TreeNode f_node2 = factor();
+                mul_op_node.Nodes.Add(f_node1);
+                mul_op_node.Nodes.Add(f_node2);
+                
             }
+            if (mul_op_node != null) return mul_op_node;
+            return f_node1;
         }
 
-        private void mul_op()
+        private TreeNode mul_op()
         {
-            if (currToken.tokenType == type.MULTIPLY)  match(type.MULTIPLY);
+            TreeNode mul_node = new TreeNode("op (" + currToken.lexeme + ")");
+            if (currToken.tokenType == type.MULTIPLY) match(type.MULTIPLY);
             else if (currToken.tokenType == type.DIVIDE) match(type.DIVIDE);
-            else Console.WriteLine("error");
-            
+            else
+            {
+                Console.WriteLine("error");
+                return null;
+            }
+            return mul_node;
         }
 
-        private void factor()
+        private TreeNode factor()
         {
-            if (currToken.tokenType == type.ID) match(type.ID);
-            else if(currToken.tokenType == type.LEFT_PARENTH)
+            if (currToken.tokenType == type.ID)
             {
-                exp();
-                match(type.RIGHT_PARENTH);
+                TreeNode id_node = new TreeNode(currToken.tokenType+"("+currToken.lexeme+")");
+                match(type.ID);
+                return id_node;
             }
-            else if(currToken.tokenType == type.FLOAT) match(type.FLOAT);
-            else if(currToken.tokenType == type.INT) match(type.INT);
-            else Console.WriteLine("error");
-
+            else if (currToken.tokenType == type.LEFT_PARENTH)
+            {
+                match(type.LEFT_PARENTH);
+                TreeNode t = exp();
+                match(type.RIGHT_PARENTH);
+                return t;
+            }
+            else if (currToken.tokenType == type.FLOAT)
+            {
+                TreeNode number = new TreeNode(currToken.tokenType + "(" + currToken.lexeme + ")");
+                match(type.FLOAT_NUMBER);
+                return number;
+            }
+            else if (currToken.tokenType == type.INT)
+            {
+                TreeNode number = new TreeNode(currToken.tokenType + "(" + currToken.lexeme + ")");
+                match(type.INT_NUMBER);
+                return number;
+            }
+            else
+            {
+                Console.WriteLine("error");
+                return null;
+            }
         }
 
         
