@@ -9,13 +9,15 @@ namespace Compiler
 {
     class Parser
     {
-        private List<Token> tokens = new List<Token>();
+        //private List<Token> tokens = new List<Token>();
+        private Token[] tokens;
         public List<TreeNode> root_nodes { get; set; }
         private Token currToken;
-        private int index=1;
+        private int index=-1;
         public Parser(List<Token> tokens)
         {
-                this.tokens = tokens;
+                this.tokens = tokens.ToArray();
+                getNextToken();
                 root_nodes=program();
                 
         }
@@ -28,21 +30,23 @@ namespace Compiler
             }
             else
             {
-                Console.WriteLine("error");
+                Console.WriteLine("errorOUT OF RANGE MF");
             }
         }
 
         void getNextToken()
         {
             index++;
-            if (index < this.tokens.Count())
+            if (index < this.tokens.Length)
             {
                 currToken = this.tokens[index];
             }
             else
             {
+                Console.WriteLine("FINITO MF");
                 currToken = null;
             }
+            Console.WriteLine(this.tokens.Length);
         }
 
         private List<TreeNode> program()
@@ -53,8 +57,9 @@ namespace Compiler
         private List<TreeNode> stmt_seq()
         {
             List<TreeNode> node_list = new List<TreeNode>();
-
-            node_list.Add(stmt());
+            TreeNode test = stmt();
+            //node_list.Add(stmt());
+            node_list.Add(test);
             while(currToken.tokenType == type.SEMI_COLON)
             {
                 match(type.SEMI_COLON);
@@ -71,14 +76,15 @@ namespace Compiler
                     return if_stmt();
                 case type.REPEAT:
                     return repeat_stmt();
-                case type.ASSIGNMENT:
-                    return assign_stmt();
+                //case type.ASSIGNMENT:
+                //    return assign_stmt();
                 case type.READ:
                     return read_stmt();
                 case type.WRITE:
                     return write_stmt();
                 default:
-                    return null;
+                    return assign_stmt();
+                    //return new TreeNode("stmt_error");
             }
         }
 
@@ -168,7 +174,7 @@ namespace Compiler
             else
             {
                 Console.WriteLine("error");
-                return null;
+                return new TreeNode("comp_op_error");
             }
             return comp_node;
         }
@@ -200,7 +206,7 @@ namespace Compiler
             else
             {
                 Console.WriteLine("error");
-                return null;
+                return new TreeNode("add_op_error");
             }
             return add_node;
         }
@@ -232,7 +238,7 @@ namespace Compiler
             else
             {
                 Console.WriteLine("error");
-                return null;
+                return new TreeNode("mul_op_error");
             }
             return mul_node;
         }
@@ -252,13 +258,13 @@ namespace Compiler
                 match(type.RIGHT_PARENTH);
                 return t;
             }
-            else if (currToken.tokenType == type.FLOAT)
+            else if (currToken.tokenType == type.FLOAT_NUMBER)
             {
                 TreeNode number = new TreeNode(currToken.tokenType + "(" + currToken.lexeme + ")");
                 match(type.FLOAT_NUMBER);
                 return number;
             }
-            else if (currToken.tokenType == type.INT)
+            else if (currToken.tokenType == type.INT_NUMBER)
             {
                 TreeNode number = new TreeNode(currToken.tokenType + "(" + currToken.lexeme + ")");
                 match(type.INT_NUMBER);
@@ -266,8 +272,10 @@ namespace Compiler
             }
             else
             {
+
                 Console.WriteLine("error");
-                return null;
+                Console.WriteLine(currToken.lexeme);
+                return new TreeNode("factor_error");
             }
         }
 

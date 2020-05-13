@@ -35,6 +35,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.parseBtn = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -55,7 +56,7 @@
             // compileBtn
             // 
             this.compileBtn.Enabled = false;
-            this.compileBtn.Location = new System.Drawing.Point(73, 387);
+            this.compileBtn.Location = new System.Drawing.Point(52, 378);
             this.compileBtn.Name = "compileBtn";
             this.compileBtn.Size = new System.Drawing.Size(75, 23);
             this.compileBtn.TabIndex = 1;
@@ -65,7 +66,7 @@
             // 
             // resetBtn
             // 
-            this.resetBtn.Location = new System.Drawing.Point(225, 387);
+            this.resetBtn.Location = new System.Drawing.Point(162, 415);
             this.resetBtn.Name = "resetBtn";
             this.resetBtn.Size = new System.Drawing.Size(75, 23);
             this.resetBtn.TabIndex = 2;
@@ -116,11 +117,23 @@
             this.panel1.Size = new System.Drawing.Size(379, 311);
             this.panel1.TabIndex = 0;
             // 
+            // parseBtn
+            // 
+            this.parseBtn.Enabled = false;
+            this.parseBtn.Location = new System.Drawing.Point(268, 378);
+            this.parseBtn.Name = "parseBtn";
+            this.parseBtn.Size = new System.Drawing.Size(75, 23);
+            this.parseBtn.TabIndex = 6;
+            this.parseBtn.Text = "Parse";
+            this.parseBtn.UseVisualStyleBackColor = true;
+            this.parseBtn.Click += new System.EventHandler(this.parseBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.parseBtn);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -147,6 +160,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Button parseBtn;
     }
 }
 
