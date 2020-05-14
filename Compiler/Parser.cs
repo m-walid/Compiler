@@ -30,13 +30,16 @@ namespace Compiler
     }
     class Parser
     {
-        bool error = false;
-        string errorMessage;
+        //bool error = false;
+        //string errorMessage;
         //private List<Token> tokens = new List<Token>();
         private Token[] tokens;
         public List<TreeNode> root_nodes { get; set; }
         private Token currToken;
         private int index = -1;
+        private bool finishedFlag=false;
+        private bool ifFlag = false;
+        private bool repeatFlag = false;
 
 
         public Parser(List<Token> tokens)
@@ -56,7 +59,9 @@ namespace Compiler
             else
             {
                 // if(currToken == null)
-                throw new InvalidExpectedToken("Error : Unexpected token " + currToken.lexeme + " of type " + currToken.tokenType + " , expected token is " + tokenType);
+                if (finishedFlag) throw new InvalidExpectedToken("Error : missing expected token " + tokenType);
+
+                throw new InvalidExpectedToken("Error : Unexpected token " + currToken.lexeme + " of type " + currToken.tokenType + " , expected token is " + tokenType + " at token index "+index);
                 //  throw new InvalidExpectedToken(currToken.tokenType,"Unmatched token");
 
             }
@@ -65,13 +70,14 @@ namespace Compiler
         void getNextToken()
         {
             index++;
-            if (index < this.tokens.Length - 1)
+            if (index < this.tokens.Length)
             {
                 currToken = this.tokens[index];
             }
             else
             {
-                 currToken = null;
+                finishedFlag = true;
+                 //currToken = null;
                 // throw new InvalidExpectedToken( "Error : ExceptionOutofBounds");
             }
             Console.WriteLine(this.tokens.Length);
@@ -88,10 +94,10 @@ namespace Compiler
             catch (InvalidExpectedToken e)
             {
 
-                error = true;
+                //error = true;
 
                 Console.WriteLine(e.Message);
-                errorMessage = e.Message;
+                //errorMessage = e.Message;
 
                 return new List<TreeNode>();
             }
@@ -104,12 +110,13 @@ namespace Compiler
             TreeNode test = stmt();
             //node_list.Add(stmt());
             node_list.Add(test);
-            while (currToken != null && currToken.tokenType == type.SEMI_COLON)
+            while (currToken.tokenType == type.SEMI_COLON)
             {
                 match(type.SEMI_COLON);
                 node_list.Add(stmt());
             }
-            if (currToken != null) throw new InvalidExpectedToken("Error : Unexpected token " + currToken.lexeme + " of type " + currToken.tokenType + " , expected token is " + type.SEMI_COLON);
+            //currToken.tokenType!=type.ENDL && currToken.tokenType != type.UNTIL && currToken.tokenType != type.ELSE
+            if (!ifFlag && !repeatFlag && !finishedFlag ) throw new InvalidExpectedToken("Error : Unexpected token " + currToken.lexeme + " of type " + currToken.tokenType + " , expected token is " + type.SEMI_COLON + " at token index " + index );
             return node_list;
         }
 
@@ -141,12 +148,15 @@ namespace Compiler
             TreeNode if_node = new TreeNode("if");
             if_node.Nodes.Add(exp());
             match(type.THEN);
+            ifFlag = true;
             if_node.Nodes.AddRange(stmt_seq().ToArray());
+            ifFlag = false;
             if (currToken.tokenType == type.ELSE)
             {
                 match(type.ELSE);
+                ifFlag = true;
                 if_node.Nodes.AddRange(stmt_seq().ToArray());
-
+                ifFlag = false;
 
             }
             match(type.ENDL);
@@ -157,7 +167,9 @@ namespace Compiler
         {
             match(type.REPEAT);
             TreeNode repeat_node = new TreeNode("repeat");
+            repeatFlag = true;
             repeat_node.Nodes.AddRange(stmt_seq().ToArray());
+            repeatFlag = false;
             match(type.UNTIL);
             repeat_node.Nodes.Add(exp());
             return repeat_node;
