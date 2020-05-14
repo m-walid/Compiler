@@ -10,19 +10,10 @@ namespace Compiler
     class InvalidExpectedToken : Exception
     {
         private string msg;
-        public InvalidExpectedToken(string s) //: base(String.Format("expected token " + t + " wtf is a "+ a.lexeme))
+        public InvalidExpectedToken(string s) 
         {
             msg = s;
-            //  if(a.tokenType == null && notfactor)
-            //  //Console.WriteLine("Error : ExceptionOutofBounds");
-            //   msg= "Error : ExceptionOutofBounds";
-            //  else if(t==null && notfactor) 
-            //   msg="Error : Invalid operation " + a.lexeme;
-            //  else if()
-            //  else if(notfactor == false)
-            //   msg="Error : Expected factor";
-            //  else 
-            //   msg="Error : Unexpected token " + a.lexeme + " of type "+a.tokenType+" , expected token is "+ t;
+
         }
         public override string Message{
             get{return msg;}
@@ -30,9 +21,6 @@ namespace Compiler
     }
     class Parser
     {
-        //bool error = false;
-        //string errorMessage;
-        //private List<Token> tokens = new List<Token>();
         private Token[] tokens;
         public List<TreeNode> root_nodes { get; set; }
         private Token currToken;
@@ -44,7 +32,7 @@ namespace Compiler
 
         public Parser(List<Token> tokens)
         {
-            this.tokens = tokens.ToArray();
+            this.tokens = tokens.ToArray().Where(token => token.tokenType != type.COMMENT).ToArray();
             getNextToken();
             root_nodes = program();
 
@@ -58,11 +46,10 @@ namespace Compiler
             }
             else
             {
-                // if(currToken == null)
                 if (finishedFlag) throw new InvalidExpectedToken("Error : missing expected token " + tokenType);
 
                 throw new InvalidExpectedToken("Error : Unexpected token " + currToken.lexeme + " of type " + currToken.tokenType + " , expected token is " + tokenType + " at token index "+index);
-                //  throw new InvalidExpectedToken(currToken.tokenType,"Unmatched token");
+
 
             }
         }
@@ -77,45 +64,26 @@ namespace Compiler
             else
             {
                 finishedFlag = true;
-                 //currToken = null;
-                // throw new InvalidExpectedToken( "Error : ExceptionOutofBounds");
+
             }
             Console.WriteLine(this.tokens.Length);
         }
 
         private List<TreeNode> program()
         {
-
-            try
-            {
-
-                return stmt_seq();
-            }
-            catch (InvalidExpectedToken e)
-            {
-
-                //error = true;
-
-                Console.WriteLine(e.Message);
-                //errorMessage = e.Message;
-
-                return new List<TreeNode>();
-            }
-
+            return stmt_seq();
         }
 
         private List<TreeNode> stmt_seq()
         {
             List<TreeNode> node_list = new List<TreeNode>();
             TreeNode test = stmt();
-            //node_list.Add(stmt());
             node_list.Add(test);
             while (currToken.tokenType == type.SEMI_COLON)
             {
                 match(type.SEMI_COLON);
                 node_list.Add(stmt());
             }
-            //currToken.tokenType!=type.ENDL && currToken.tokenType != type.UNTIL && currToken.tokenType != type.ELSE
             if (!ifFlag && !repeatFlag && !finishedFlag ) throw new InvalidExpectedToken("Error : Unexpected token " + currToken.lexeme + " of type " + currToken.tokenType + " , expected token is " + type.SEMI_COLON + " at token index " + index );
             return node_list;
         }
@@ -128,8 +96,7 @@ namespace Compiler
                     return if_stmt();
                 case type.REPEAT:
                     return repeat_stmt();
-                //case type.ASSIGNMENT:
-                //    return assign_stmt();
+
                 case type.READ:
                     return read_stmt();
                 case type.WRITE:
@@ -138,7 +105,7 @@ namespace Compiler
                     return assign_stmt();
                 default:
                     throw new InvalidExpectedToken("Error : Expected a statment");
-                    //return new TreeNode("stmt_error");
+
             }
         }
 
@@ -188,7 +155,7 @@ namespace Compiler
         private TreeNode read_stmt()
         {
             match(type.READ);
-            TreeNode read_node = new TreeNode("read (" + currToken.lexeme + ")"); //currToken.lexeme is the name of the ID
+            TreeNode read_node = new TreeNode("read (" + currToken.lexeme + ")");
             match(type.ID);
             return read_node;
         }

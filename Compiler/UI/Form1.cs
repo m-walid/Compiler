@@ -138,11 +138,19 @@ namespace Compiler
         private void parseBtn_Click(object sender, EventArgs e)
         {
             ParserTreeTest parseTreeTest = new ParserTreeTest();
+            try
+            {
+
             Parser parser = new Parser(scanner.tokens);
             parseTreeTest.treeView1.Nodes.AddRange(parser.root_nodes.ToArray());
             //parseTreeTest.treeView1.Nodes.RemoveAt(parseTreeTest.treeView1.Nodes.Count - 1);
             DialogResult dialogResultparse = parseTreeTest.ShowDialog();
             parseTreeTest.Dispose();
+            }
+            catch(InvalidExpectedToken error)
+            {
+                Console.WriteLine(error.Message);
+            }
         }
     }
 }
