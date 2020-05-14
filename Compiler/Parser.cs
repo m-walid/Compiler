@@ -7,51 +7,95 @@ using System.Windows.Forms;
 
 namespace Compiler
 {
+    class InvalidExpectedToken : Exception
+    {
+        private string msg;
+        public InvalidExpectedToken(string s) //: base(String.Format("expected token " + t + " wtf is a "+ a.lexeme))
+        {
+            msg = s;
+            //  if(a.tokenType == null && notfactor)
+            //  //Console.WriteLine("Error : ExceptionOutofBounds");
+            //   msg= "Error : ExceptionOutofBounds";
+            //  else if(t==null && notfactor) 
+            //   msg="Error : Invalid operation " + a.lexeme;
+            //  else if()
+            //  else if(notfactor == false)
+            //   msg="Error : Expected factor";
+            //  else 
+            //   msg="Error : Unexpected token " + a.lexeme + " of type "+a.tokenType+" , expected token is "+ t;
+        }
+        public override string Message{
+            get{return msg;}
+        }
+    }
     class Parser
     {
+        bool error = false;
+        string errorMessage;
         //private List<Token> tokens = new List<Token>();
         private Token[] tokens;
         public List<TreeNode> root_nodes { get; set; }
         private Token currToken;
-        private int index=-1;
+        private int index = -1;
+
+
         public Parser(List<Token> tokens)
         {
-                this.tokens = tokens.ToArray();
-                getNextToken();
-                root_nodes=program();
-                
+            this.tokens = tokens.ToArray();
+            getNextToken();
+            root_nodes = program();
+
         }
 
         void match(type tokenType)
         {
-            if(currToken.tokenType == tokenType)
+            if (currToken.tokenType == tokenType)
             {
                 getNextToken();
             }
             else
             {
-                Console.WriteLine("errorOUT OF RANGE MF");
+                // if(currToken == null)
+                throw new InvalidExpectedToken("Error : Unexpected token " + currToken.lexeme + " of type " + currToken.tokenType + " , expected token is " + tokenType);
+                //  throw new InvalidExpectedToken(currToken.tokenType,"Unmatched token");
+
             }
         }
 
         void getNextToken()
         {
             index++;
-            if (index < this.tokens.Length)
+            if (index < this.tokens.Length - 1)
             {
                 currToken = this.tokens[index];
             }
             else
             {
-                Console.WriteLine("FINITO MF");
-                currToken = null;
+                 currToken = null;
+                // throw new InvalidExpectedToken( "Error : ExceptionOutofBounds");
             }
             Console.WriteLine(this.tokens.Length);
         }
 
         private List<TreeNode> program()
         {
-            return stmt_seq();
+
+            try
+            {
+
+                return stmt_seq();
+            }
+            catch (InvalidExpectedToken e)
+            {
+
+                error = true;
+
+                Console.WriteLine(e.Message);
+                errorMessage = e.Message;
+
+                return new List<TreeNode>();
+            }
+
         }
 
         private List<TreeNode> stmt_seq()
@@ -60,11 +104,12 @@ namespace Compiler
             TreeNode test = stmt();
             //node_list.Add(stmt());
             node_list.Add(test);
-            while(currToken.tokenType == type.SEMI_COLON)
+            while (currToken != null && currToken.tokenType == type.SEMI_COLON)
             {
                 match(type.SEMI_COLON);
                 node_list.Add(stmt());
             }
+            if (currToken != null) throw new InvalidExpectedToken("Error : Unexpected token " + currToken.lexeme + " of type " + currToken.tokenType + " , expected token is " + type.SEMI_COLON);
             return node_list;
         }
 
@@ -82,8 +127,10 @@ namespace Compiler
                     return read_stmt();
                 case type.WRITE:
                     return write_stmt();
-                default:
+                case type.ID:
                     return assign_stmt();
+                default:
+                    throw new InvalidExpectedToken("Error : Expected a statment");
                     //return new TreeNode("stmt_error");
             }
         }
@@ -95,7 +142,7 @@ namespace Compiler
             if_node.Nodes.Add(exp());
             match(type.THEN);
             if_node.Nodes.AddRange(stmt_seq().ToArray());
-            if(currToken.tokenType == type.ELSE)
+            if (currToken.tokenType == type.ELSE)
             {
                 match(type.ELSE);
                 if_node.Nodes.AddRange(stmt_seq().ToArray());
@@ -109,8 +156,8 @@ namespace Compiler
         private TreeNode repeat_stmt()
         {
             match(type.REPEAT);
-            TreeNode repeat_node =new TreeNode("repeat");
-            repeat_node.Nodes.AddRange( stmt_seq().ToArray());
+            TreeNode repeat_node = new TreeNode("repeat");
+            repeat_node.Nodes.AddRange(stmt_seq().ToArray());
             match(type.UNTIL);
             repeat_node.Nodes.Add(exp());
             return repeat_node;
@@ -121,13 +168,13 @@ namespace Compiler
             TreeNode assign_node = new TreeNode("Assign (" + currToken.lexeme + ")");
             match(type.ID);
             match(type.ASSIGNMENT);
-            
+
             assign_node.Nodes.Add(exp());
             return assign_node;
         }
 
         private TreeNode read_stmt()
-        {   
+        {
             match(type.READ);
             TreeNode read_node = new TreeNode("read (" + currToken.lexeme + ")"); //currToken.lexeme is the name of the ID
             match(type.ID);
@@ -144,11 +191,11 @@ namespace Compiler
 
         private TreeNode exp()
         {
-           TreeNode simple_exp_node1= simple_exp();
-            if(currToken.tokenType == type.LESS_THAN || currToken.tokenType == type.GREATER_THAN || currToken.tokenType == type.EQUAL)
+            TreeNode simple_exp_node1 = simple_exp();
+            if (currToken.tokenType == type.LESS_THAN || currToken.tokenType == type.GREATER_THAN || currToken.tokenType == type.EQUAL)
             {
-                TreeNode op_node=comp_op();
-                TreeNode simple_exp_node2= simple_exp();
+                TreeNode op_node = comp_op();
+                TreeNode simple_exp_node2 = simple_exp();
                 op_node.Nodes.Add(simple_exp_node1);
                 op_node.Nodes.Add(simple_exp_node2);
                 return op_node;
@@ -173,18 +220,17 @@ namespace Compiler
             }
             else
             {
-                Console.WriteLine("error");
-                return new TreeNode("comp_op_error");
+                throw new InvalidExpectedToken("Error : Invalid operation " + currToken.lexeme);
             }
             return comp_node;
         }
 
         private TreeNode simple_exp()
         {
-            TreeNode term_node1=term();
+            TreeNode term_node1 = term();
             TreeNode add_op_node = null;
             TreeNode temp = null;
-            while (currToken.tokenType == type.PLUS || currToken.tokenType == type.MINUS )
+            while (currToken.tokenType == type.PLUS || currToken.tokenType == type.MINUS)
             {
                 temp = add_op_node;
                 add_op_node = add_op();
@@ -192,9 +238,9 @@ namespace Compiler
                 TreeNode term_node2 = term();
                 add_op_node.Nodes.Add(term_node1);
                 add_op_node.Nodes.Add(term_node2);
-               
+
             }
-            if(add_op_node != null) return add_op_node;
+            if (add_op_node != null) return add_op_node;
             return term_node1;
         }
 
@@ -205,26 +251,25 @@ namespace Compiler
             else if (currToken.tokenType == type.MINUS) match(type.MINUS);
             else
             {
-                Console.WriteLine("error");
-                return new TreeNode("add_op_error");
+                throw new InvalidExpectedToken("Error : Invalid operation " + currToken.lexeme);
             }
             return add_node;
         }
 
         private TreeNode term()
         {
-            TreeNode f_node1=factor();
+            TreeNode f_node1 = factor();
             TreeNode mul_op_node = null;
             TreeNode temp = null;
-            while (currToken.tokenType == type.MULTIPLY ||currToken.tokenType == type.DIVIDE ) 
+            while (currToken.tokenType == type.MULTIPLY || currToken.tokenType == type.DIVIDE)
             {
                 temp = mul_op_node;
-                mul_op_node=mul_op();
+                mul_op_node = mul_op();
                 if (temp != null) f_node1 = temp;
                 TreeNode f_node2 = factor();
                 mul_op_node.Nodes.Add(f_node1);
                 mul_op_node.Nodes.Add(f_node2);
-                
+
             }
             if (mul_op_node != null) return mul_op_node;
             return f_node1;
@@ -237,8 +282,7 @@ namespace Compiler
             else if (currToken.tokenType == type.DIVIDE) match(type.DIVIDE);
             else
             {
-                Console.WriteLine("error");
-                return new TreeNode("mul_op_error");
+                throw new InvalidExpectedToken("Error : Invalid operation " + currToken.lexeme);
             }
             return mul_node;
         }
@@ -247,7 +291,7 @@ namespace Compiler
         {
             if (currToken.tokenType == type.ID)
             {
-                TreeNode id_node = new TreeNode(currToken.tokenType+"("+currToken.lexeme+")");
+                TreeNode id_node = new TreeNode(currToken.tokenType + "(" + currToken.lexeme + ")");
                 match(type.ID);
                 return id_node;
             }
@@ -273,16 +317,8 @@ namespace Compiler
             else
             {
 
-                Console.WriteLine("error");
-                Console.WriteLine(currToken.lexeme);
-                return new TreeNode("factor_error");
+                throw new InvalidExpectedToken("Error : Expected factor");
             }
         }
-
-        
-
-
-
-
     }
 }
