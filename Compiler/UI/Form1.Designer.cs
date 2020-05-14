@@ -56,19 +56,21 @@
             // compileBtn
             // 
             this.compileBtn.Enabled = false;
-            this.compileBtn.Location = new System.Drawing.Point(52, 378);
+            this.compileBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.compileBtn.Location = new System.Drawing.Point(30, 378);
             this.compileBtn.Name = "compileBtn";
-            this.compileBtn.Size = new System.Drawing.Size(75, 23);
+            this.compileBtn.Size = new System.Drawing.Size(97, 31);
             this.compileBtn.TabIndex = 1;
-            this.compileBtn.Text = "Compile";
+            this.compileBtn.Text = "Scan";
             this.compileBtn.UseVisualStyleBackColor = true;
             this.compileBtn.Click += new System.EventHandler(this.compileBtn_Click);
             // 
             // resetBtn
             // 
-            this.resetBtn.Location = new System.Drawing.Point(162, 415);
+            this.resetBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.resetBtn.Location = new System.Drawing.Point(283, 378);
             this.resetBtn.Name = "resetBtn";
-            this.resetBtn.Size = new System.Drawing.Size(75, 23);
+            this.resetBtn.Size = new System.Drawing.Size(97, 31);
             this.resetBtn.TabIndex = 2;
             this.resetBtn.Text = "Reset";
             this.resetBtn.UseVisualStyleBackColor = true;
@@ -92,9 +94,10 @@
             // 
             this.label1.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(667, 31);
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(640, 24);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(38, 13);
+            this.label1.Size = new System.Drawing.Size(53, 20);
             this.label1.TabIndex = 4;
             this.label1.Text = "Token";
             // 
@@ -102,9 +105,10 @@
             // 
             this.label2.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(504, 31);
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(494, 24);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(44, 13);
+            this.label2.Size = new System.Drawing.Size(65, 20);
             this.label2.TabIndex = 5;
             this.label2.Text = "Lexeme";
             // 
@@ -120,9 +124,10 @@
             // parseBtn
             // 
             this.parseBtn.Enabled = false;
-            this.parseBtn.Location = new System.Drawing.Point(268, 378);
+            this.parseBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.parseBtn.Location = new System.Drawing.Point(555, 378);
             this.parseBtn.Name = "parseBtn";
-            this.parseBtn.Size = new System.Drawing.Size(75, 23);
+            this.parseBtn.Size = new System.Drawing.Size(97, 31);
             this.parseBtn.TabIndex = 6;
             this.parseBtn.Text = "Parse";
             this.parseBtn.UseVisualStyleBackColor = true;

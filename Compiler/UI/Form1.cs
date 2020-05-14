@@ -21,6 +21,15 @@ namespace Compiler
         {
             InitializeComponent();
         }
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                var cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000;    // Turn on WS_EX_COMPOSITED
+                return cp;
+            }
+        }
 
         private void codeBox_Enter(object sender, EventArgs e)
         {
@@ -83,7 +92,7 @@ namespace Compiler
             scanner = new Scanner(codeBox.Text + " ");
             AddLexeme();
             parseBtn.Enabled = true;
-            rowCount++;
+            //rowCount++;
             //tabel1.RowCount++;
            
         }
@@ -101,10 +110,15 @@ namespace Compiler
                     lexeme.Text = token.lexeme;
                     lexeme.UseMnemonic=false;
                     tokens.Text = token.tokenType.ToString();
-                    tabel1.Controls.Add(lexeme, 0, rowCount);
-                    tabel1.Controls.Add(tokens, 1, rowCount);
-                    rowCount++;
-                    tabel1.RowCount++;
+                    if (token.lexeme != "")
+                    {
+                        tabel1.Controls.Add(lexeme, 0, rowCount);
+                        tabel1.Controls.Add(tokens, 1, rowCount);
+                        Console.WriteLine(lexeme + "  " + rowCount);
+                        rowCount++;
+                    }
+                    //tabel1.RowCount++;
+                   
                 }
             }
             else
@@ -115,7 +129,7 @@ namespace Compiler
                 DialogResult dialogresult = popUpForm.ShowDialog();
                 codeBox.Focus();
                 codeBox.SelectionStart = scanner.index;
-
+                
                 popUpForm.Dispose();
                 
             }
