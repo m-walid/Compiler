@@ -132,21 +132,31 @@ namespace Compiler
                 currentToken.lexeme += currentChar;
             if (currentChar == '*')
             {
-                getNext();
-                    handleLeaveComment();
-            }   
+                
+                currentState = state.LEAVE_COMMENT;
+            }
+            //getNext();
         }
         private void handleLeaveComment()
         {
+            currentToken.lexeme += currentChar;
             if (currentChar == '/')
             {
+
                 
-                currentToken.lexeme += currentChar;
                 currentToken.tokenType = type.COMMENT;
                 currentState = state.DONE;
                 getNext();
 
+
             }
+            else if (currentChar != '*')
+            {
+               // currentToken.lexeme += currentChar;
+                currentState = state.IN_COMMENT;
+            }
+            //getNext();
+
         }
         private void handleError()
         {
@@ -309,7 +319,7 @@ namespace Compiler
                     }
                     if (currentState != state.DONE && currentState != state.ERROR) getNext(); //because if done we need to check the last char before we advance
                 }
-                tokens.Add(currentToken); 
+                if (currentToken.lexeme!="")tokens.Add(currentToken); 
             }
         }
 
