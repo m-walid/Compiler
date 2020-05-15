@@ -10,10 +10,10 @@ using System.Windows.Forms;
 
 namespace Compiler
 {
-    public partial class MSGAL_Test : Form
+    public partial class ParseError : Form
     {
         
-        public MSGAL_Test()
+        public ParseError()
         {
             InitializeComponent();
         }

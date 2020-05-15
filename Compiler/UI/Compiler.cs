@@ -26,7 +26,7 @@ namespace Compiler
             get
             {
                 var cp = base.CreateParams;
-                cp.ExStyle |= 0x02000000;    // Turn on WS_EX_COMPOSITED
+                cp.ExStyle |= 0x02000000;    
                 return cp;
             }
         }
@@ -57,6 +57,7 @@ namespace Compiler
             { 
                 compileBtn.Enabled = true;
                 resetBtn.Enabled = true;
+                parseBtn.Enabled = false;
             }
             else
             {
@@ -76,9 +77,7 @@ namespace Compiler
             tabel1.Controls.Clear();
             tabel1.RowCount = 0;
             rowCount = 0;
-           
-
-            
+          
         }
 
         private void compileBtn_Click(object sender, EventArgs e)
@@ -90,10 +89,9 @@ namespace Compiler
             
             tabel1.Visible = true;
             scanner = new Scanner(codeBox.Text + " ");
+            //parseBtn.Enabled = true;
             AddLexeme();
-            parseBtn.Enabled = true;
-            //rowCount++;
-            //tabel1.RowCount++;
+            
            
         }
         
@@ -116,10 +114,9 @@ namespace Compiler
                         tabel1.Controls.Add(tokens, 1, rowCount);
                         Console.WriteLine(lexeme + "  " + rowCount);
                         rowCount++;
-                    }
-                    //tabel1.RowCount++;
-                   
+                    } 
                 }
+                parseBtn.Enabled = true;
             }
             else
             {
@@ -130,25 +127,29 @@ namespace Compiler
                 codeBox.Focus();
                 codeBox.SelectionStart = scanner.index;
                 
-                popUpForm.Dispose();
-                
+                parseBtn.Enabled = false;
+                popUpForm.Dispose();  
             }
         }
-
         private void parseBtn_Click(object sender, EventArgs e)
         {
             ParserTreeTest parseTreeTest = new ParserTreeTest();
             try
             {
-
             Parser parser = new Parser(scanner.tokens);
             parseTreeTest.treeView1.Nodes.AddRange(parser.root_nodes.ToArray());
-            //parseTreeTest.treeView1.Nodes.RemoveAt(parseTreeTest.treeView1.Nodes.Count - 1);
             DialogResult dialogResultparse = parseTreeTest.ShowDialog();
             parseTreeTest.Dispose();
             }
             catch(InvalidExpectedToken error)
             {
+                ParseError parseError = new ParseError();
+                parseError.parseErrorLbl.Text = error.Message;
+                parseError.parseErrorLbl.UseMnemonic = false;
+                DialogResult dialogResultParseError = parseError.ShowDialog();
+                codeBox.Focus();
+                parseBtn.Enabled = false;
+                parseError.Dispose();
                 Console.WriteLine(error.Message);
             }
         }

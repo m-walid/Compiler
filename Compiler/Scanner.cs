@@ -124,7 +124,6 @@ namespace Compiler
                     currentToken.tokenType = type.INT_NUMBER;
                     currentState = state.DONE;
                 }
-
             }
         }
         private void handleInComment()
@@ -132,31 +131,22 @@ namespace Compiler
                 currentToken.lexeme += currentChar;
             if (currentChar == '*')
             {
-                
                 currentState = state.LEAVE_COMMENT;
             }
-            //getNext();
         }
         private void handleLeaveComment()
         {
             currentToken.lexeme += currentChar;
             if (currentChar == '/')
             {
-
-                
                 currentToken.tokenType = type.COMMENT;
                 currentState = state.DONE;
                 getNext();
-
-
             }
             else if (currentChar != '*')
             {
-               // currentToken.lexeme += currentChar;
                 currentState = state.IN_COMMENT;
             }
-            //getNext();
-
         }
         private void handleError()
         {
@@ -169,8 +159,6 @@ namespace Compiler
             else
             {
                 errorMsg = ($"Error occurred at \"" + currentChar + "\" at index \"" + (index + 1) + "\" , please review code.");
-
-
             }
             currentChar = null;
         }
@@ -220,11 +208,7 @@ namespace Compiler
                 currentToken.tokenType = type.ID;
                 currentState = state.DONE;
             }
-
         }
-
-
-
 
         private void handleSlash()
         {
@@ -247,7 +231,7 @@ namespace Compiler
                 currentToken.lexeme += currentChar;
                 currentToken.tokenType = type.ASSIGNMENT;
                 currentState = state.DONE;
-                getNext(); //because w don't need to check this char anymore
+                getNext();
 
             }
             else
@@ -317,7 +301,7 @@ namespace Compiler
                             handleError();
                             break;
                     }
-                    if (currentState != state.DONE && currentState != state.ERROR) getNext(); //because if done we need to check the last char before we advance
+                    if (currentState != state.DONE && currentState != state.ERROR) getNext();
                 }
                 if (currentToken.lexeme!="")tokens.Add(currentToken); 
             }

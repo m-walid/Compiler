@@ -49,8 +49,6 @@ namespace Compiler
                 if (finishedFlag) throw new InvalidExpectedToken("Error : missing expected token " + tokenType);
 
                 throw new InvalidExpectedToken("Error : Unexpected token " + currToken.lexeme + " of type " + currToken.tokenType + " , expected token is " + tokenType + " at token index "+index);
-
-
             }
         }
 
