@@ -35,12 +35,12 @@ namespace Compiler
         public Scanner(string input)
         {
             this.input = input;
-            getNext();
-            getTokens();
+            GetNext();
+            GetTokens();
             
 
         }
-        private void getNext()
+        private void GetNext()
         {
             index++;
             if (index < input.Length)
@@ -57,7 +57,7 @@ namespace Compiler
         
 
 
-        private void handleStart()
+        private void HandleStart()
         {
             currentToken.lexeme += currentChar;
             //for loop 3la el dict
@@ -75,11 +75,11 @@ namespace Compiler
             if (currentToken.tokenType != null)
             {
                 currentState = state.DONE;
-                getNext();
+                GetNext();
             }
         }
 
-        private void handleString()
+        private void HandleString()
         {
             currentToken.lexeme += currentChar;
             if (currentChar == '"')
@@ -87,10 +87,10 @@ namespace Compiler
 
                 currentState = state.DONE;
                 currentToken.tokenType = type.STRING_LITERAL;
-                getNext();
+                GetNext();
             }
         }
-        private void handleNumber()
+        private void HandleNumber()
         {
             if (new Regex(DIGIT).IsMatch(currentChar + ""))
             {
@@ -126,7 +126,7 @@ namespace Compiler
                 }
             }
         }
-        private void handleInComment()
+        private void HandleInComment()
         {
                 currentToken.lexeme += currentChar;
             if (currentChar == '*')
@@ -134,21 +134,21 @@ namespace Compiler
                 currentState = state.LEAVE_COMMENT;
             }
         }
-        private void handleLeaveComment()
+        private void HandleLeaveComment()
         {
             currentToken.lexeme += currentChar;
             if (currentChar == '/')
             {
                 currentToken.tokenType = type.COMMENT;
                 currentState = state.DONE;
-                getNext();
+                GetNext();
             }
             else if (currentChar != '*')
             {
                 currentState = state.IN_COMMENT;
             }
         }
-        private void handleError()
+        private void HandleError()
         {
             flag = true;
             if (currentChar == ' ')
@@ -163,35 +163,35 @@ namespace Compiler
             currentChar = null;
         }
 
-        private void handleAnd()
+        private void HandleAnd()
         {
             if (currentChar == '&')
             {
                 currentToken.lexeme += currentChar;
                 currentToken.tokenType = type.AND;
                 currentState = state.DONE;
-                getNext();
+                GetNext();
             }
             else
             {
                 currentState = state.ERROR;
             }
         }
-            private void handleOr()
+            private void HandleOr()
         {
             if (currentChar == '|')
             {
                 currentToken.lexeme += currentChar;
                 currentToken.tokenType = type.OR;
                 currentState = state.DONE;
-                getNext();
+                GetNext();
             }
             else
             {
                 currentState = state.ERROR;
             }
         }
-        private void handleID()
+        private void HandleID()
         {
             if (new Regex(VALID_ID).IsMatch(currentChar + "") == true)
             {
@@ -210,7 +210,7 @@ namespace Compiler
             }
         }
 
-        private void handleSlash()
+        private void HandleSlash()
         {
             if (currentChar == '*')
             {
@@ -224,14 +224,14 @@ namespace Compiler
             }
         }
 
-        private void handleAssign()
+        private void HandleAssign()
         {
             if (currentChar == '=')
             {
                 currentToken.lexeme += currentChar;
                 currentToken.tokenType = type.ASSIGNMENT;
                 currentState = state.DONE;
-                getNext();
+                GetNext();
 
             }
             else
@@ -241,7 +241,7 @@ namespace Compiler
         }
 
 
-        private void getTokens()
+        private void GetTokens()
         {
             while (currentChar != null)
             {
@@ -254,35 +254,35 @@ namespace Compiler
                     switch (currentState)
                     {
                         case state.START:
-                            handleStart();
+                            HandleStart();
                             break;
                         case state.IN_NUM:
-                            handleNumber();
+                            HandleNumber();
                             break;
                         case state.IN_ID:
-                            handleID();
+                            HandleID();
                             break;
                         case state.IN_ASSIGN:
-                            handleAssign();
+                            HandleAssign();
                             break;
                         case state.IN_SLASH:
-                            handleSlash();
+                            HandleSlash();
                             break;
                         case state.IN_COMMENT:
-                            handleInComment();
+                            HandleInComment();
                             break;
                         case state.LEAVE_COMMENT:
-                            handleLeaveComment();
+                            HandleLeaveComment();
                             break;
                         case state.IN_STRING:
-                            handleString();
+                            HandleString();
                             break;
                         case state.IN_NOT_EQUAL:
                             if (currentChar == '>')
                             {
                                 currentToken.tokenType = type.NOT_EQUAL;
                                 currentToken.lexeme += currentChar;
-                                getNext();
+                                GetNext();
                             }
                             else
                             {
@@ -292,16 +292,16 @@ namespace Compiler
                             currentState = state.DONE;
                             break;
                         case state.IN_AND:
-                            handleAnd();
+                            HandleAnd();
                             break;
                         case state.IN_OR:
-                            handleOr();
+                            HandleOr();
                             break;
                         case state.ERROR:
-                            handleError();
+                            HandleError();
                             break;
                     }
-                    if (currentState != state.DONE && currentState != state.ERROR) getNext();
+                    if (currentState != state.DONE && currentState != state.ERROR) GetNext();
                 }
                 if (currentToken.lexeme!="")tokens.Add(currentToken); 
             }

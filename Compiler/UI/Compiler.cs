@@ -134,7 +134,7 @@ namespace Compiler
             try
             {
             Parser parser = new Parser(scanner.tokens);
-            parseTreeTest.treeView1.Nodes.AddRange(parser.root_nodes.ToArray());
+            parseTreeTest.treeView1.Nodes.AddRange(parser.rootNodes.ToArray());
             DialogResult dialogResultparse = parseTreeTest.ShowDialog();
             parseTreeTest.Dispose();
             }

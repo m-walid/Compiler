@@ -45,13 +45,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InvalidExpectedToken.cs" />
     <Compile Include="UI\ParseError.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\ParseError.Designer.cs">
       <DependentUpon>ParseError.cs</DependentUpon>
     </Compile>
-    <Compile Include="Node.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="UI\ParserTree.cs">
       <SubType>Form</SubType>
