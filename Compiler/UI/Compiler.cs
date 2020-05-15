@@ -85,11 +85,9 @@ namespace Compiler
             tabel1.Controls.Clear();
             tabel1.RowCount = 0;
             rowCount = 0;
-            code = codeBox.Text;
-            
+            code = codeBox.Text;   
             tabel1.Visible = true;
             scanner = new Scanner(codeBox.Text + " ");
-            //parseBtn.Enabled = true;
             AddLexeme();
             
            
@@ -112,7 +110,6 @@ namespace Compiler
                     {
                         tabel1.Controls.Add(lexeme, 0, rowCount);
                         tabel1.Controls.Add(tokens, 1, rowCount);
-                        Console.WriteLine(lexeme + "  " + rowCount);
                         rowCount++;
                     } 
                 }
@@ -150,7 +147,6 @@ namespace Compiler
                 codeBox.Focus();
                 parseBtn.Enabled = false;
                 parseError.Dispose();
-                Console.WriteLine(error.Message);
             }
         }
     }

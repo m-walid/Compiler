@@ -64,7 +64,6 @@ namespace Compiler
                 finishedFlag = true;
 
             }
-            Console.WriteLine(this.tokens.Length);
         }
 
         private List<TreeNode> program()
