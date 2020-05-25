@@ -156,7 +156,7 @@ namespace Compiler
         private TreeNode Exp()
         {
             TreeNode simpleExpNode1 = SimpleExp();
-            if (currToken.tokenType == type.LESS_THAN || currToken.tokenType == type.GREATER_THAN || currToken.tokenType == type.EQUAL)
+            if (currToken.tokenType == type.LESS_THAN || currToken.tokenType == type.GREATER_THAN || currToken.tokenType == type.EQUAL || currToken.tokenType == type.NOT_EQUAL)
             {
                 TreeNode opNode = CompOp();
                 TreeNode simpleExpNode2 = SimpleExp();
@@ -181,6 +181,10 @@ namespace Compiler
             else if (currToken.tokenType == type.EQUAL)
             {
                 Match(type.EQUAL);
+            }
+            else if(currToken.tokenType == type.NOT_EQUAL)
+            {
+                Match(type.NOT_EQUAL);
             }
             else
             {
