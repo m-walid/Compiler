@@ -21,6 +21,15 @@ namespace Compiler
         {
             InitializeComponent();
         }
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                var cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000;    
+                return cp;
+            }
+        }
 
         private void codeBox_Enter(object sender, EventArgs e)
         {
@@ -48,6 +57,7 @@ namespace Compiler
             { 
                 compileBtn.Enabled = true;
                 resetBtn.Enabled = true;
+                parseBtn.Enabled = false;
             }
             else
             {
@@ -67,9 +77,7 @@ namespace Compiler
             tabel1.Controls.Clear();
             tabel1.RowCount = 0;
             rowCount = 0;
-           
-
-            
+          
         }
 
         private void compileBtn_Click(object sender, EventArgs e)
@@ -77,14 +85,11 @@ namespace Compiler
             tabel1.Controls.Clear();
             tabel1.RowCount = 0;
             rowCount = 0;
-            code = codeBox.Text;
-            
+            code = codeBox.Text;   
             tabel1.Visible = true;
             scanner = new Scanner(codeBox.Text + " ");
             AddLexeme();
-            parseBtn.Enabled = true;
-            rowCount++;
-            //tabel1.RowCount++;
+            
            
         }
         
@@ -101,11 +106,14 @@ namespace Compiler
                     lexeme.Text = token.lexeme;
                     lexeme.UseMnemonic=false;
                     tokens.Text = token.tokenType.ToString();
-                    tabel1.Controls.Add(lexeme, 0, rowCount);
-                    tabel1.Controls.Add(tokens, 1, rowCount);
-                    rowCount++;
-                    tabel1.RowCount++;
+                    if (token.lexeme != "")
+                    {
+                        tabel1.Controls.Add(lexeme, 0, rowCount);
+                        tabel1.Controls.Add(tokens, 1, rowCount);
+                        rowCount++;
+                    } 
                 }
+                parseBtn.Enabled = true;
             }
             else
             {
@@ -115,20 +123,31 @@ namespace Compiler
                 DialogResult dialogresult = popUpForm.ShowDialog();
                 codeBox.Focus();
                 codeBox.SelectionStart = scanner.index;
-
-                popUpForm.Dispose();
                 
+                parseBtn.Enabled = false;
+                popUpForm.Dispose();  
             }
         }
-
         private void parseBtn_Click(object sender, EventArgs e)
         {
             ParserTreeTest parseTreeTest = new ParserTreeTest();
+            try
+            {
             Parser parser = new Parser(scanner.tokens);
-            parseTreeTest.treeView1.Nodes.AddRange(parser.root_nodes.ToArray());
-            //parseTreeTest.treeView1.Nodes.RemoveAt(parseTreeTest.treeView1.Nodes.Count - 1);
+            parseTreeTest.treeView1.Nodes.AddRange(parser.rootNodes.ToArray());
             DialogResult dialogResultparse = parseTreeTest.ShowDialog();
             parseTreeTest.Dispose();
+            }
+            catch(InvalidExpectedToken error)
+            {
+                ParseError parseError = new ParseError();
+                parseError.parseErrorLbl.Text = error.Message;
+                parseError.parseErrorLbl.UseMnemonic = false;
+                DialogResult dialogResultParseError = parseError.ShowDialog();
+                codeBox.Focus();
+                parseBtn.Enabled = false;
+                parseError.Dispose();
+            }
         }
     }
 }

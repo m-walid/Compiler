@@ -68,6 +68,7 @@
             this.Controls.Add(this.collapseBtn);
             this.Controls.Add(this.expandBtn);
             this.Controls.Add(this.treeView1);
+            this.MinimizeBox = false;
             this.Name = "ParserTreeTest";
             this.Text = "ParserTreeTest";
             this.Load += new System.EventHandler(this.ParserTreeTest_Load);
