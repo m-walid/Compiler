@@ -69,7 +69,7 @@ namespace Compiler
                 Match(type.SEMI_COLON);
                 nodeList.Add(Stmt());
             }
-            if (ifFlag ==0 && repeatFlag ==0 && finishedFlag==0 ) throw new InvalidExpectedToken("Error : Unexpected token " + currToken.lexeme + " of type " + currToken.tokenType + " , Expected token is " + type.SEMI_COLON + " at token index " + (index + 1));
+            if (ifFlag ==0 && repeatFlag ==0 && finishedFlag==0 ) throw new InvalidExpectedToken("Error : Unexpected token " + currToken.lexeme + " of type " + currToken.tokenType + " ,\n Expected token is " + type.SEMI_COLON + " at token index " + (index + 1));
             return nodeList;
         }
 
