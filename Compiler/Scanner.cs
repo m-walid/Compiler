@@ -34,7 +34,7 @@ namespace Compiler
 
         public Scanner(string input)
         {
-            this.input = input;
+            this.input = input; 
             GetNext();
             GetTokens();
             
@@ -60,7 +60,6 @@ namespace Compiler
         private void HandleStart()
         {
             currentToken.lexeme += currentChar;
-            //for loop 3la el dict
             if (currentChar == ':') currentState = state.IN_ASSIGN;
             else if (currentChar == '/') currentState = state.IN_SLASH;
             else if (currentChar == '<') currentState = state.IN_NOT_EQUAL;
@@ -153,12 +152,13 @@ namespace Compiler
             flag = true;
             if (currentChar == ' ')
             {
-               errorMsg = ($"Error occurred at \"" + currentToken.lexeme + "\" at index \"" + (index + 1) + "\" , please review code.");
-
+                errorMsg = ($"Error occurred at \"" + currentToken.lexeme + "\" at index \"" + (index+1) + "\" , please review code.");
+                //errorMsg = $"{index}";
             }
             else
             {
-                errorMsg = ($"Error occurred at \"" + currentChar + "\" at index \"" + (index + 1) + "\" , please review code.");
+                errorMsg = ($"Error occurred at \"" + currentChar + "\" at index \"" + (index+1) + "\" , please review code.");
+                //errorMsg = $"{index}";
             }
             currentChar = null;
         }

@@ -105,6 +105,7 @@ namespace Compiler
                     tokens = new Label();
                     lexeme.Text = token.lexeme;
                     lexeme.UseMnemonic=false;
+                    lexeme.AutoSize = true;
                     tokens.Text = token.tokenType.ToString();
                     if (token.lexeme != "")
                     {

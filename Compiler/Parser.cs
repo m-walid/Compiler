@@ -37,7 +37,7 @@ namespace Compiler
             {
                 if (finishedFlag) throw new InvalidExpectedToken("Error : missing Expected token " + tokenType);
 
-                throw new InvalidExpectedToken("Error : UnExpected token " + currToken.lexeme + " of type " + currToken.tokenType + " , Expected token is " + tokenType + " at token index "+index);
+                throw new InvalidExpectedToken("Error : Unexpected token " + currToken.tokenType + " , \nExpected token is " + tokenType + " at token index "+ (index+1));
             }
         }
 
@@ -69,7 +69,7 @@ namespace Compiler
                 Match(type.SEMI_COLON);
                 nodeList.Add(Stmt());
             }
-            if (!ifFlag && !repeatFlag && !finishedFlag ) throw new InvalidExpectedToken("Error : Unexpected token " + currToken.lexeme + " of type " + currToken.tokenType + " , Expected token is " + type.SEMI_COLON + " at token index " + index );
+            if (!ifFlag && !repeatFlag && !finishedFlag ) throw new InvalidExpectedToken("Error : Unexpected token " + currToken.lexeme + " of type " + currToken.tokenType + " , Expected token is " + type.SEMI_COLON + " at token index " + (index + 1));
             return nodeList;
         }
 
@@ -89,7 +89,7 @@ namespace Compiler
                 case type.ID:
                     return AssignStmt();
                 default:
-                    throw new InvalidExpectedToken("Error : Expected a statment");
+                    throw new InvalidExpectedToken("Error : Expected a statment" + " at token index " + (index + 1));
 
             }
         }
@@ -188,7 +188,7 @@ namespace Compiler
             }
             else
             {
-                throw new InvalidExpectedToken("Error : Invalid operation " + currToken.lexeme);
+                throw new InvalidExpectedToken("Error : Invalid operation " + currToken.lexeme + " at token index " + (index + 1));
             }
             return compNode;
         }
@@ -219,7 +219,7 @@ namespace Compiler
             else if (currToken.tokenType == type.MINUS) Match(type.MINUS);
             else
             {
-                throw new InvalidExpectedToken("Error : Invalid operation " + currToken.lexeme);
+                throw new InvalidExpectedToken("Error : Invalid operation " + currToken.lexeme + " at token index " + (index + 1));
             }
             return addNode;
         }
@@ -250,7 +250,7 @@ namespace Compiler
             else if (currToken.tokenType == type.DIVIDE) Match(type.DIVIDE);
             else
             {
-                throw new InvalidExpectedToken("Error : Invalid operation " + currToken.lexeme);
+                throw new InvalidExpectedToken("Error : Invalid operation " + currToken.lexeme + " at token index " + (index + 1));
             }
             return mulNode;
         }
@@ -285,7 +285,7 @@ namespace Compiler
             else
             {
 
-                throw new InvalidExpectedToken("Error : Expected Factor");
+                throw new InvalidExpectedToken("Error : Expected Factor" + " at token index " + (index + 1));
             }
         }
     }
