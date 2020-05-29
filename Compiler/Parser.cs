@@ -14,9 +14,9 @@ namespace Compiler
         public List<TreeNode> rootNodes { get; set; }
         private Token currToken;
         private int index = -1;
-        private bool finishedFlag=false;
-        private bool ifFlag = false;
-        private bool repeatFlag = false;
+        private int finishedFlag=0;
+        private int ifFlag = 0;
+        private int repeatFlag = 0;
 
 
         public Parser(List<Token> tokens)
@@ -35,7 +35,7 @@ namespace Compiler
             }
             else
             {
-                if (finishedFlag) throw new InvalidExpectedToken("Error : missing Expected token " + tokenType);
+                if (finishedFlag==1) throw new InvalidExpectedToken("Error : missing Expected token " + tokenType);
 
                 throw new InvalidExpectedToken("Error : Unexpected token " + currToken.tokenType + " , \nExpected token is " + tokenType + " at token index "+ (index+1));
             }
@@ -50,7 +50,7 @@ namespace Compiler
             }
             else
             {
-                finishedFlag = true;
+                finishedFlag = 1;
 
             }
         }
@@ -69,7 +69,7 @@ namespace Compiler
                 Match(type.SEMI_COLON);
                 nodeList.Add(Stmt());
             }
-            if (!ifFlag && !repeatFlag && !finishedFlag ) throw new InvalidExpectedToken("Error : Unexpected token " + currToken.lexeme + " of type " + currToken.tokenType + " , Expected token is " + type.SEMI_COLON + " at token index " + (index + 1));
+            if (ifFlag ==0 && repeatFlag ==0 && finishedFlag==0 ) throw new InvalidExpectedToken("Error : Unexpected token " + currToken.lexeme + " of type " + currToken.tokenType + " , Expected token is " + type.SEMI_COLON + " at token index " + (index + 1));
             return nodeList;
         }
 
@@ -100,15 +100,15 @@ namespace Compiler
             TreeNode ifNode = new TreeNode("if");
             ifNode.Nodes.Add(Exp());
             Match(type.THEN);
-            ifFlag = true;
+            ifFlag++;
             ifNode.Nodes.AddRange(StmtSeq().ToArray());
-            ifFlag = false;
+            ifFlag--;
             if (currToken.tokenType == type.ELSE)
             {
                 Match(type.ELSE);
-                ifFlag = true;
+                ifFlag ++;
                 ifNode.Nodes.AddRange(StmtSeq().ToArray());
-                ifFlag = false;
+                ifFlag--;
 
             }
             Match(type.ENDL);
@@ -119,9 +119,9 @@ namespace Compiler
         {
             Match(type.REPEAT);
             TreeNode repeatNode = new TreeNode("repeat");
-            repeatFlag = true;
+            repeatFlag++;
             repeatNode.Nodes.AddRange(StmtSeq().ToArray());
-            repeatFlag = false;
+            repeatFlag--;
             Match(type.UNTIL);
             repeatNode.Nodes.Add(Exp());
             return repeatNode;
